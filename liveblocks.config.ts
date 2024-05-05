@@ -61,6 +61,7 @@ type Presence = {
   cursor: Point | null;
   pencilDraft: [x: number, y: number, pressure: number][] | null;
   penColor: Color | null;
+  strokeWidth: number | null;
 };
 
 // Storage represents the shared document that persists in the Room, even after

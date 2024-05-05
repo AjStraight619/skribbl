@@ -33,6 +33,7 @@ function Drafts() {
     (other) => ({
       pencilDraft: other.presence.pencilDraft,
       penColor: other.presence.penColor,
+      strokeWidth: other.presence.strokeWidth,
     }),
     shallow
   );
@@ -48,6 +49,7 @@ function Drafts() {
               y={0}
               points={other.pencilDraft}
               fill={other.penColor ? colorToCss(other.penColor) : "#CCC"}
+              strokeWidth={other.strokeWidth ?? 5}
             />
           );
         }

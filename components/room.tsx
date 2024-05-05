@@ -20,6 +20,7 @@ export function Room({ children, roomId }: RoomProps) {
         cursor: null,
         pencilDraft: null,
         penColor: null,
+        strokeWidth: null,
       }}
       initialStorage={{
         layers: new LiveMap<string, LiveObject<Layer>>(),

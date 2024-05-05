@@ -6,12 +6,16 @@ import SelectionButton from "./selection-button";
 import { Separator } from "../ui/separator";
 import ColorPicker from "./color-picker";
 import { colorToCss } from "@/lib/utils";
+import StrokeSelection from "./stroke-selection";
+import { SetStateAction } from "react";
 
 type ToolbarProps = {
   canvasState: CanvasState;
   setCanvasState: (newState: CanvasState) => void;
   setLastUsedColor: (color: Color) => void;
   lastUsedColor: Color;
+  strokeWidth: number;
+  setStrokeWidth: React.Dispatch<SetStateAction<number>>;
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
@@ -24,6 +28,8 @@ export default function Toolbar({
   setCanvasState,
   setLastUsedColor,
   lastUsedColor,
+  strokeWidth,
+  setStrokeWidth,
   undo,
   redo,
   canUndo,
@@ -54,6 +60,11 @@ export default function Toolbar({
         <ColorPicker
           lastUsedColor={lastUsedColor}
           setLastUsedColor={setLastUsedColor}
+        />
+        <StrokeSelection
+          lastUsedColor={lastUsedColor}
+          strokeWidth={strokeWidth}
+          setStrokeWidth={setStrokeWidth}
         />
         <Separator orientation="vertical" />
         <ToolbarButton onClick={undo} size="icon">

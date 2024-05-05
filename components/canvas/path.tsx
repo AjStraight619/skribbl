@@ -8,6 +8,7 @@ type Props = {
   fill: string;
   onPointerDown?: (e: React.PointerEvent) => void;
   stroke?: string;
+  strokeWidth: number;
 };
 
 export default function Path({
@@ -17,13 +18,14 @@ export default function Path({
   stroke,
   fill,
   points,
+  strokeWidth,
 }: Props) {
   return (
     <path
       onPointerDown={onPointerDown}
       d={getSvgPathFromStroke(
         getStroke(points, {
-          size: 16,
+          size: strokeWidth,
           thinning: 0.5,
           smoothing: 0.5,
           streamline: 0.5,

@@ -40,6 +40,7 @@ export type RectangleLayer = {
   y: number;
   height: number;
   width: number;
+  strokeWidth?: number;
   fill: Color;
 };
 
@@ -49,6 +50,7 @@ export type EllipseLayer = {
   y: number;
   height: number;
   width: number;
+  strokeWidth?: number;
   fill: Color;
 };
 
@@ -61,6 +63,7 @@ export type PathLayer = {
   // Could be computed based on points
   width: number;
   fill: Color;
+  strokeWidth: number;
   points: number[][];
 };
 

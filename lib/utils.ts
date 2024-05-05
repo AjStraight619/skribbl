@@ -185,7 +185,8 @@ export function getSvgPathFromStroke(stroke: number[][]) {
 
 export function penPointsToPathLayer(
   points: number[][],
-  color: Color
+  color: Color,
+  strokeWidth: number
 ): PathLayer {
   if (points.length < 2) {
     throw new Error("Can't transform points with less than 2 points");
@@ -219,6 +220,7 @@ export function penPointsToPathLayer(
     width: right - left,
     height: bottom - top,
     fill: color,
+    strokeWidth,
     points: points.map(([x, y, pressure]) => [x - left, y - top, pressure]),
   };
 }

@@ -54,6 +54,8 @@ export default function Canvas() {
     b: 42,
   });
 
+  const [strokeWidth, setStrokeWidth] = useState<number>(5);
+
   const onLayerPointerDown = useMutation(
     ({ self, setMyPresence }, e: React.PointerEvent, layerId: string) => {
       if (
@@ -141,7 +143,9 @@ export default function Canvas() {
       const id = nanoid();
       liveLayers.set(
         id,
-        new LiveObject(penPointsToPathLayer(pencilDraft, lastUsedColor))
+        new LiveObject(
+          penPointsToPathLayer(pencilDraft, lastUsedColor, strokeWidth)
+        )
       );
 
       const liveLayerIds = storage.get("layerIds");
@@ -149,7 +153,7 @@ export default function Canvas() {
       setMyPresence({ pencilDraft: null });
       setState({ mode: CanvasMode.Pencil });
     },
-    [lastUsedColor]
+    [lastUsedColor, strokeWidth]
   );
 
   /**
@@ -439,12 +443,15 @@ export default function Canvas() {
               fill={colorToCss(lastUsedColor)}
               x={0}
               y={0}
+              strokeWidth={strokeWidth}
             />
           )}
         </g>
       </svg>
       <Toolbar
         canvasState={canvasState}
+        strokeWidth={strokeWidth}
+        setStrokeWidth={setStrokeWidth}
         setCanvasState={setState}
         setLastUsedColor={setLastUsedColor}
         lastUsedColor={lastUsedColor}
