@@ -3,19 +3,18 @@ import { useRound } from "@/hooks/useRound";
 import { getErrorMessage } from "@/lib/utils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
-import { useMutation, useStorage } from "@/liveblocks.config";
+import { useMutation, useSelf, useStorage } from "@/liveblocks.config";
 import useInterval from "@/hooks/useInterval";
 
 export default function WordDisplay() {
   const { round, startNewRound } = useRound();
-
   const { timer, timerActive } = round;
-  const renderRef = useRef(0);
   const revealedChars = useStorage((root) => root.round.revealedChars);
-
-  useEffect(() => {
-    console.log("This component re rendered: ", renderRef.current++);
-  }, []);
+  const game = useStorage((root) => root.game);
+  const leader = useStorage((storage) =>
+    storage.players.find((player) => player.isLeader === true)
+  );
+  const myId = useSelf().id;
 
   const clearGameStorage = useMutation(({ storage }) => {
     const game = storage.get("game");
@@ -27,7 +26,7 @@ export default function WordDisplay() {
   }, []);
 
   useInterval(() => {
-    if (timerActive) {
+    if (timerActive && myId === leader?.id) {
       decrementTimer();
     }
   }, 1000);
@@ -36,26 +35,55 @@ export default function WordDisplay() {
     const round = storage.get("round");
     const currentTime = round.get("timer");
     const currentWord = round.get("currentWord");
-    const wordLength = currentWord.length;
+    const revealedChars = round.get("revealedChars");
+    const game = storage.get("game");
 
-    if (currentTime === 0) return;
+    if (currentTime === 0 || !game.get("isStarted")) {
+      return;
+    }
+
+    round.set("timer", currentTime - 1);
+
+    let initialDelay;
+    if (currentWord.length <= 5) {
+      initialDelay = round.get("timePerRound") * 0.75;
+    } else {
+      initialDelay = round.get("timePerRound") * 0.5;
+    }
+
+    // Check if it's too early to start revealing characters
+    if (currentTime > round.get("timePerRound") - initialDelay) {
+      return; // Don't reveal any characters yet
+    }
+
+    // Reveal characters based on word length and the current time
+    const revealedCount = revealedChars.filter((char) => char !== "").length;
+    let maxReveals;
+    if (currentWord.length <= 5) {
+      maxReveals = 1; // Max 1 reveal for short words
+    } else if (currentWord.length <= 7) {
+      maxReveals = 2; // Max 2 reveals for medium-short words
+    } else {
+      maxReveals = 3; // Max 3 reveals for longer words
+    }
+
+    // Check if maximum reveals have been reached
+    if (revealedCount >= maxReveals) {
+      return; // No more reveals allowed
+    }
 
     let revealFrequency;
-    if (wordLength <= 5) {
+    if (currentWord.length <= 5) {
       revealFrequency = 10; // Less frequent for short words
-    } else if (wordLength <= 8) {
+    } else if (currentWord.length <= 8) {
       revealFrequency = 5; // More frequent for medium words
     } else {
       revealFrequency = 3; // Most frequent for long words
     }
 
-    // Reveal a character based on calculated frequency and ensure it's not at the start
-    if (
-      currentTime % revealFrequency === 0 &&
-      currentTime !== round.get("timePerRound")
-    ) {
-      const unrevealedIndices = round
-        .get("revealedChars")
+    // Reveal a character if it's the right time
+    if (currentTime % revealFrequency === 0) {
+      const unrevealedIndices = revealedChars
         .map((char, index) => (char === "" ? index : -1))
         .filter((index) => index !== -1);
       if (unrevealedIndices.length > 0) {
@@ -65,8 +93,6 @@ export default function WordDisplay() {
         revealCharacter(unrevealedIndices[randomIndex]);
       }
     }
-
-    round.set("timer", currentTime - 1);
   }, []);
 
   const revealCharacter = useMutation(({ storage }, index: number) => {
@@ -79,6 +105,8 @@ export default function WordDisplay() {
       round.set("revealedChars", revealedChars);
     }
   }, []);
+
+  if (!game.isStarted) return;
 
   return (
     <div className="absolute top-4 -translate-x-1/2 left-1/2 p-4 bg-white shadow-lg rounded-lg h-16 select-none">

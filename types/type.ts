@@ -21,9 +21,19 @@ export type Game = {
   isStarted: boolean;
   isFinished: boolean;
   maxRounds: number;
+  wordDifficuly: WordDifficulty;
 };
 
 export type WordDifficulty = "easy" | "medium" | "hard";
+
+export type Message = {
+  id: string;
+  userId: string;
+  username: string;
+  content: string;
+  isClose: boolean;
+  isCorrect: boolean;
+};
 
 export type Round = {
   currentRound: number;
@@ -45,6 +55,7 @@ export type Player = {
   score: number;
   isTurn: boolean;
   didGuessWord: boolean;
+  messages: Message[];
 };
 
 export type Layer = RectangleLayer | EllipseLayer | PathLayer;

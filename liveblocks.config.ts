@@ -5,7 +5,15 @@ import {
   createClient,
 } from "@liveblocks/client";
 import { createRoomContext, createLiveblocksContext } from "@liveblocks/react";
-import { Color, Game, Layer, Player, Point, Round } from "./types/type";
+import {
+  Color,
+  Game,
+  Layer,
+  Message,
+  Player,
+  Point,
+  Round,
+} from "./types/type";
 
 const client = createClient({
   authEndpoint: "/api/liveblocks-auth",
@@ -62,6 +70,8 @@ type Presence = {
   pencilDraft: [x: number, y: number, pressure: number][] | null;
   penColor: Color | null;
   strokeWidth: number | null;
+  isLeader: boolean;
+  messages: Message[];
 };
 
 // Storage represents the shared document that persists in the Room, even after

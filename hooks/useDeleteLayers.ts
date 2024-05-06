@@ -8,6 +8,6 @@ export function useDeleteLayers() {
 
     liveLayerIds.toArray().forEach((layerId) => liveLayers.delete(layerId));
     liveLayerIds.clear();
-    history.clear();
+    // history.clear();
   }, []);
 }

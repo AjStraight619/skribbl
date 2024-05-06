@@ -37,28 +37,35 @@ export default function Lobby({
   );
 
   const players = useStorage((root) => root.players);
+  const numRounds = useStorage((root) => root.game.maxRounds);
 
   useEffect(() => {
     console.log("This compontent re-rendered: ", renderRef.current++);
   }, []);
 
-  const addPlayer = useMutation(({ storage, self }, playerId: string) => {
-    const currentPlayers = storage.get("players").toImmutable();
-    if (!isExistingUser(currentPlayers, playerId)) {
-      const newPlayer = new LiveObject<PlayerType>({
-        id: playerId,
-        username: self.info.username,
-        score: 0,
-        avatar: self.info.avatar,
-        isLeader: currentPlayers.length === 0,
-        isDrawing: false,
-        isTurn: false,
-        didGuessWord: false,
-      });
+  const addPlayer = useMutation(
+    ({ storage, self, setMyPresence }, playerId: string) => {
+      const currentPlayers = storage.get("players").toImmutable();
+      if (!isExistingUser(currentPlayers, playerId)) {
+        const newPlayer = new LiveObject<PlayerType>({
+          id: playerId,
+          username: self.info.username,
+          score: 0,
+          avatar: self.info.avatar,
+          isLeader: currentPlayers.length === 0,
+          isDrawing: false,
+          isTurn: false,
+          didGuessWord: false,
+          messages: [],
+        });
 
-      storage.get("players").push(newPlayer);
-    }
-  }, []);
+        setMyPresence({ isLeader: currentPlayers.length === 0 });
+
+        storage.get("players").push(newPlayer);
+      }
+    },
+    []
+  );
 
   const removePlayer = useMutation(({ storage }, playerId) => {
     const players = storage.get("players");
@@ -97,15 +104,15 @@ export default function Lobby({
       className={cn(
         `${
           absolute
-            ? "absolute transform -translate-y-1/2 top-1/2 left-2 flex flex-col gap-y-1"
+            ? "absolute transform -translate-y-1/4 top-1/4 left-2 flex flex-col p-1"
             : ""
         } select-none`,
         className
       )}
     >
       {showRound && (
-        <p className="text-xl font-poppins self-center">
-          Round: {currentRound}
+        <p className="text-xl font-poppins text-start mb-1">
+          Round: {currentRound} / {numRounds}
         </p>
       )}
       <Card>

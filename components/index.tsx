@@ -1,6 +1,7 @@
 "use client";
 
 import Canvas from "./canvas";
+import Chat from "./chat/chat";
 import Lobby from "./lobby";
 import { PreGameLobby } from "./lobby/pre-game-lobby";
 import WordDisplay from "./words";
@@ -12,6 +13,7 @@ export function Live() {
       <WordDisplay />
       <Lobby />
       <Canvas />
+      <Chat />
     </div>
   );
 }

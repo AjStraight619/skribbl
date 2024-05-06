@@ -9,23 +9,27 @@ type UseRoundReturnType = [
   () => Promise<void>
 ];
 
-export function useRound(wordDifficulty?: string, time?: number) {
+export function useRound() {
   const round = useStorage((root) => root.round);
   const deleteAllLayers = useDeleteLayers();
+  const wordDifficulty = useStorage((root) => root.game.wordDifficuly);
 
   const newRound = useMutation(({ storage }, newWord: string) => {
-    const currentRound = storage.get("round");
     deleteAllLayers();
-    console.log("newRound called");
-    currentRound.set("currentRound", currentRound.get("currentRound") + 1);
-    currentRound.set("currentWord", newWord.toUpperCase());
-    currentRound.set("timer", time ?? 45);
-    currentRound.set("timePerRound", time ?? 45);
-    currentRound.set("timerActive", true);
-    currentRound.set(
+    const game = storage.get("game");
+    const maxRound = game.get("maxRounds");
+    const roundInfo = storage.get("round");
+    if (roundInfo.get("currentRound") === maxRound) {
+      game.set("isFinished", true);
+    }
+    roundInfo.set("currentRound", roundInfo.get("currentRound") + 1);
+    roundInfo.set("currentWord", newWord.toUpperCase());
+    roundInfo.set("timerActive", true);
+    roundInfo.set(
       "revealedChars",
-      new Array(currentRound.get("currentWord")?.length).fill("")
+      new Array(roundInfo.get("currentWord")?.length).fill("")
     );
+    roundInfo.set("timer", storage.get("round").get("timePerRound"));
   }, []);
 
   const startNewRound = useCallback(async () => {

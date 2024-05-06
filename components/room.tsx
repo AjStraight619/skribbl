@@ -22,6 +22,8 @@ export function Room({ children, roomId }: RoomProps) {
         pencilDraft: null,
         penColor: null,
         strokeWidth: null,
+        isLeader: false,
+        messages: [],
       }}
       initialStorage={{
         layers: new LiveMap<string, LiveObject<Layer>>(),
@@ -40,7 +42,8 @@ export function Room({ children, roomId }: RoomProps) {
         game: new LiveObject({
           isStarted: false,
           isFinished: false,
-          maxRounds: 8,
+          maxRounds: 7,
+          wordDifficuly: "easy",
         }),
       }}
     >
