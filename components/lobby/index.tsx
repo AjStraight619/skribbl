@@ -10,10 +10,24 @@ import { useCallback, useEffect, useRef } from "react";
 import { toast } from "../ui/use-toast";
 import { LiveObject } from "@liveblocks/client";
 import { Player as PlayerType } from "@/types/type";
+import { cn } from "@/lib/utils";
+import { useRound } from "@/hooks/useRound";
 
-export default function Lobby() {
+type LobbyProps = {
+  className?: string;
+  absolute?: boolean;
+  showRound?: boolean;
+};
+
+export default function Lobby({
+  className,
+  absolute = true,
+  showRound = true,
+}: LobbyProps) {
   const self = useSelf();
   const renderRef = useRef(0);
+  const { round } = useRound();
+  const { currentRound } = round;
 
   const isExistingUser = useCallback(
     (players: readonly PlayerType[], playerId: string) => {
@@ -39,6 +53,7 @@ export default function Lobby() {
         isLeader: currentPlayers.length === 0,
         isDrawing: false,
         isTurn: false,
+        didGuessWord: false,
       });
 
       storage.get("players").push(newPlayer);
@@ -78,21 +93,37 @@ export default function Lobby() {
   }, [self, players, addPlayer, isExistingUser]);
 
   return (
-    <Card className="absolute transform -translate-y-1/2 top-1/2 left-2 select-none">
-      <CardHeader>
-        <CardTitle className="text-center font-poppins tracking-widest">
-          Players
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        {players && (
-          <div className="flex flex-col gap-y-2">
-            {players.map((player) => (
-              <Player key={player.id} {...player} />
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+    <div
+      className={cn(
+        `${
+          absolute
+            ? "absolute transform -translate-y-1/2 top-1/2 left-2 flex flex-col gap-y-1"
+            : ""
+        } select-none`,
+        className
+      )}
+    >
+      {showRound && (
+        <p className="text-xl font-poppins self-center">
+          Round: {currentRound}
+        </p>
+      )}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-center font-poppins tracking-widest">
+            Players
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {players && (
+            <div className="flex flex-col gap-y-2">
+              {players.map((player) => (
+                <Player key={player.id} {...player} />
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }

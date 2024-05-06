@@ -8,6 +8,7 @@ export default function Player({ ...props }: PlayerProps) {
     <div className="flex flex-row items-center gap-x-2">
       {props.isLeader && <CrownIcon fill="yellow" />}
       <p className="font-poppins">{props.username}</p>
+      <span>{props.score}</span>
     </div>
   );
 }

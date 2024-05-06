@@ -67,12 +67,12 @@ export default function Toolbar({
           setStrokeWidth={setStrokeWidth}
         />
         <Separator orientation="vertical" />
-        <ToolbarButton onClick={undo} size="icon">
+        {/* <ToolbarButton disabled={!canUndo} onClick={undo} size="icon">
           <UndoIcon />
         </ToolbarButton>
-        <ToolbarButton onClick={redo} size="icon">
+        <ToolbarButton disabled={!canRedo} onClick={redo} size="icon">
           <RedoIcon />
-        </ToolbarButton>
+        </ToolbarButton> */}
         <ToolbarButton onClick={deleteAllLayers} size="icon">
           <TrashIcon />
         </ToolbarButton>

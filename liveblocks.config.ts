@@ -5,7 +5,7 @@ import {
   createClient,
 } from "@liveblocks/client";
 import { createRoomContext, createLiveblocksContext } from "@liveblocks/react";
-import { Color, Layer, Player, Point } from "./types/type";
+import { Color, Game, Layer, Player, Point, Round } from "./types/type";
 
 const client = createClient({
   authEndpoint: "/api/liveblocks-auth",
@@ -72,6 +72,8 @@ type Storage = {
   layers: LiveMap<string, LiveObject<Layer>>;
   layerIds: LiveList<string>;
   players: LiveList<LiveObject<Player>>;
+  round: LiveObject<Round>;
+  game: LiveObject<Game>;
 };
 
 // Optionally, UserMeta represents static/readonly metadata on each user, as

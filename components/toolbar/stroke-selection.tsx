@@ -42,7 +42,7 @@ export default function StrokeSelection({
     <Popover open={isPopoverOpen} onOpenChange={setPopoverOpen}>
       <PopoverTrigger asChild>
         <Button size="icon" variant="secondary">
-          <CircleIcon fill={colorToCss(lastUsedColor)} />
+          <CircleIcon size={strokeWidth * 2} fill={colorToCss(lastUsedColor)} />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-fit">

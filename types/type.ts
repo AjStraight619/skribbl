@@ -20,6 +20,20 @@ export type Camera = {
 export type Game = {
   isStarted: boolean;
   isFinished: boolean;
+  maxRounds: number;
+};
+
+export type WordDifficulty = "easy" | "medium" | "hard";
+
+export type Round = {
+  currentRound: number;
+  currentWord: string;
+  revealedChars: string[];
+  timer: number;
+  timePerRound: number;
+  timerActive: boolean;
+  isRoundOver: boolean;
+  isRoundStarted: boolean;
 };
 
 export type Player = {
@@ -30,6 +44,7 @@ export type Player = {
   isLeader: boolean;
   score: number;
   isTurn: boolean;
+  didGuessWord: boolean;
 };
 
 export type Layer = RectangleLayer | EllipseLayer | PathLayer;
