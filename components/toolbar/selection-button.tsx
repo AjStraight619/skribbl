@@ -1,5 +1,5 @@
 import React from "react";
-import ToolbarButton from "@/components/ui/toolbar-button";
+import IconButton from "@/components/icon-button";
 
 type Props = {
   isActive: boolean;
@@ -8,10 +8,10 @@ type Props = {
 
 export default function SelectionButton({ isActive, onClick }: Props) {
   return (
-    <ToolbarButton isActive={isActive} onClick={onClick}>
+    <IconButton isActive={isActive} onClick={onClick}>
       <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
         <path d="M13 26V9L25 21.1428H18.2189L13 26Z" fill="currentColor" />
       </svg>
-    </ToolbarButton>
+    </IconButton>
   );
 }

@@ -33,6 +33,9 @@ import Path from "./path";
 import Toolbar from "../toolbar";
 import Layer from "./layer";
 import MultiplayerGuides from "./multiplayer-guides";
+import SelectionTools from "../toolbar/selection-tools";
+import SelectionBox from "../toolbar/selection-box";
+import styles from "@/components/toolbar/selection-box.module.css";
 
 export default function Canvas() {
   const pencilDraft = useSelf((me) => me.presence.pencilDraft);
@@ -311,6 +314,24 @@ export default function Canvas() {
     return layerIdsToColorSelection;
   }, [selections]);
 
+  const layerIdsToStrokeWidthSelection = useMemo(() => {
+    const layerIdsToStrokeWidthSelection: Record<string, string> = {};
+
+    for (const user of selections) {
+      const [connectionId, selection] = user;
+      for (const layerId of selection) {
+      }
+    }
+  }, [selections]);
+
+  const onWheel = useCallback((e: React.WheelEvent) => {
+    // Pan the camera based on the wheel delta
+    setCamera((camera) => ({
+      x: camera.x - e.deltaX,
+      y: camera.y - e.deltaY,
+    }));
+  }, []);
+
   const onPointerDown = useCallback(
     (e: React.PointerEvent) => {
       const point = pointerEventToCanvasPoint(e, camera);
@@ -396,58 +417,71 @@ export default function Canvas() {
     ]
   );
 
-  const deleteAllLayers = useMutation(({ storage }) => {
-    const liveLayers = storage.get("layers");
-    const liveLayerIds = storage.get("layerIds");
-
-    liveLayerIds.toArray().forEach((layerId) => liveLayers.delete(layerId));
-    liveLayerIds.clear();
-    history.clear();
-  }, []);
-
   return (
-    <div className="bg-gray-100">
-      {/* <SelectionTools
+    <>
+      <div>
+        <SelectionTools
           isAnimated={
             canvasState.mode !== CanvasMode.Translating &&
             canvasState.mode !== CanvasMode.Resizing
           }
+          lastUsedColor={lastUsedColor}
           camera={camera}
           setLastUsedColor={setLastUsedColor}
-        /> */}
-      <svg
-        onPointerLeave={onPointerLeave}
-        onPointerMove={onPointerMove}
-        onPointerDown={onPointerDown}
-        onPointerUp={onPointerUp}
-        className="h-screen w-full"
-      >
-        <g
-          style={{
-            transform: `translate(${camera.x}px, ${camera.y}px)`,
-          }}
+        />
+        <svg
+          className={"h-screen w-full"}
+          // onWheel={onWheel}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerLeave={onPointerLeave}
+          onPointerUp={onPointerUp}
         >
-          <MultiplayerGuides />
-          {layerIds.map((layerId) => (
-            <Layer
-              key={layerId}
-              id={layerId}
-              mode={canvasState.mode}
-              onLayerPointerDown={onLayerPointerDown}
-              selectionColor={layerIdsToColorSelection[layerId]}
+          <g
+            style={{
+              transform: `translate(${camera.x}px, ${camera.y}px)`,
+            }}
+          >
+            {layerIds.map((layerId) => (
+              <Layer
+                key={layerId}
+                id={layerId}
+                mode={canvasState.mode}
+                onLayerPointerDown={onLayerPointerDown}
+                // selectionColor={layerIdsToColorSelection[layerId]}
+              />
+            ))}
+            {/* Blue square that show the selection of the current users. Also contains the resize handles. */}
+            <SelectionBox
+              onResizeHandlePointerDown={onResizeHandlePointerDown}
             />
-          ))}
-          {pencilDraft != null && pencilDraft.length > 0 && (
-            <Path
-              points={pencilDraft}
-              fill={colorToCss(lastUsedColor)}
-              x={0}
-              y={0}
-              strokeWidth={strokeWidth}
-            />
-          )}
-        </g>
-      </svg>
+            {/* Selection net that appears when the user is selecting multiple layers at once */}
+            {canvasState.mode === CanvasMode.SelectionNet &&
+              canvasState.current != null && (
+                <rect
+                  className={styles.selection_net}
+                  x={Math.min(canvasState.origin.x, canvasState.current.x)}
+                  y={Math.min(canvasState.origin.y, canvasState.current.y)}
+                  width={Math.abs(canvasState.origin.x - canvasState.current.x)}
+                  height={Math.abs(
+                    canvasState.origin.y - canvasState.current.y
+                  )}
+                />
+              )}
+            <MultiplayerGuides />
+            {/* Drawing in progress. Still not commited to the storage. */}
+            {pencilDraft != null && pencilDraft.length > 0 && (
+              <Path
+                points={pencilDraft}
+                fill={colorToCss(lastUsedColor)}
+                x={0}
+                y={0}
+                strokeWidth={strokeWidth}
+              />
+            )}
+          </g>
+        </svg>
+      </div>
       <Toolbar
         canvasState={canvasState}
         strokeWidth={strokeWidth}
@@ -459,8 +493,7 @@ export default function Canvas() {
         canUndo={canUndo}
         undo={history.undo}
         redo={history.redo}
-        deleteAllLayers={deleteAllLayers}
       />
-    </div>
+    </>
   );
 }

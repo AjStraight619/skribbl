@@ -38,7 +38,7 @@ const Layer = memo(
           <Path
             key={id}
             points={layer.points}
-            // onPointerDown={(e) => onLayerPointerDown(e, id)}
+            onPointerDown={(e) => onLayerPointerDown(e, id)}
             x={layer.x}
             y={layer.y}
             fill={layer.fill ? colorToCss(layer.fill) : "#CCC"}

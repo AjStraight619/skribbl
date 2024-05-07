@@ -1,8 +1,8 @@
 import {
   useMutation,
+  useOthers,
   useOthersMapped,
   useSelf,
-  useStorage,
 } from "@/liveblocks.config";
 import {
   Card,
@@ -11,11 +11,13 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Input } from "../ui/input";
 import { ScrollArea } from "../ui/scroll-area";
 import { useEffect, useRef, useState } from "react";
 import { Message } from "@/types/type";
 import { nanoid } from "nanoid";
+
+import Messages from "./messages";
+import ChatInput from "./chat-input";
 
 export default function Chat() {
   const [input, setInput] = useState("");
@@ -24,26 +26,24 @@ export default function Chat() {
 
   const myMessages = useSelf((me) => me.presence.messages);
 
-  const othersMessages = useOthersMapped((other) => other.presence.messages);
+  const othersMessages = useOthers((user) =>
+    user.map((user) => user.presence.messages)
+  ).flat();
 
-  //   const allMessages = [...myMessages.flat(), ...othersMessages.flat()];
+  const othersMessagesMapped = useOthersMapped(
+    (other) => other.presence.messages
+  );
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    console.log("input in keydown: ", input);
-    if (e.key === "Enter" && input.length > 0) {
-      // Checking if Enter key is pressed and input is not empty
-      console.log("in key down");
-      sendMessage(input);
-      setInput(""); // Resetting the input after sending the message
-    }
-  };
+  const allMessages = [...myMessages, ...othersMessages].sort(
+    (a, b) => a.timeStamp - b.timeStamp
+  );
 
   const isCorrect = (lastUserMessage: string, currentWord: string) => {
-    return lastUserMessage === currentWord;
+    return lastUserMessage.toLowerCase() === currentWord.toLowerCase();
   };
 
   const isClose = (lastUserMessage: string, currentWord: string) => {
-    let count = 0; // Count of correct characters in the correct position
+    let count = 0;
     currentWord.split("").forEach((char, idx) => {
       if (lastUserMessage[idx] === char) {
         count++;
@@ -55,22 +55,39 @@ export default function Chat() {
     return incorrectCount <= 2;
   };
 
+  const calculateScore = (currentTime: number) => {
+    return 1;
+  };
+
   const sendMessage = useMutation(
     ({ setMyPresence, self, storage }, message: string) => {
       const currentWord = storage.get("round").get("currentWord");
+      const player = storage
+        .get("players")
+        .find((player) => player.get("id") === self.id);
 
-      console.log("message: ", message);
+      const currentTime = storage.get("round").get("timer");
+
       const newUserMessage: Message = {
         id: nanoid(),
         userId: self.id,
         username: self.info.username,
         content: message,
+        timeStamp: Date.now(),
         isCorrect: isCorrect(message, currentWord),
         isClose: isClose(message, currentWord),
       };
       setMyPresence({ messages: [...self.presence.messages, newUserMessage] });
+      setInput("");
       // TODO: If user answers correct update player storage and the time in which they answered to calculate points accumulated
+      // ? Use storage or presence if they guess word?
+      // ! Presence implementation
+      // TODO: Implement score calculations
+      if (newUserMessage.isCorrect) {
+        player?.set("score", player.get("score") + calculateScore(currentTime));
+      }
     },
+
     []
   );
 
@@ -78,7 +95,7 @@ export default function Chat() {
     if (bottomOfMessagesRef.current) {
       bottomOfMessagesRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [myMessages]);
+  }, [allMessages]);
 
   return (
     <Card className="absolute transform -translate-y-1/4 top-1/4 right-4 min-h-[20rem] max-h-[30rem] flex flex-col select-none shadow-lg">
@@ -89,34 +106,16 @@ export default function Chat() {
       </CardHeader>
       <ScrollArea className="flex flex-col flex-grow overflow-y-auto">
         <CardContent>
-          {myMessages && (
-            <ul className="text-sm flex flex-col gap-2 mt-auto">
-              {myMessages.map((msg, idx) => (
-                <li
-                  className={`${msg.isCorrect ? "text-green-500" : ""} ${
-                    msg.isClose ? "text-yellow-500" : ""
-                  } flex flex-row items-center gap-x-1`}
-                  key={msg.id}
-                >
-                  <span className="font-poppins">{msg.username}: </span>
-                  <span className="font-light">{msg.content}</span>
-
-                  {msg.isClose && <span> is close!!</span>}
-                  {msg.isCorrect && <span> is correct!!</span>}
-                </li>
-              ))}
-            </ul>
-          )}
+          <Messages messages={allMessages} />
           <div ref={bottomOfMessagesRef} />
         </CardContent>
       </ScrollArea>
 
       <CardFooter>
-        <Input
-          onKeyDown={handleKeyDown}
-          placeholder="Guess the word!"
-          onChange={(e) => setInput(e.target.value)}
-          value={input}
+        <ChatInput
+          onSendMessage={sendMessage}
+          input={input}
+          setInput={setInput}
         />
       </CardFooter>
     </Card>

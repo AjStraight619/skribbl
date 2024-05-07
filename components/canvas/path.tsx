@@ -8,7 +8,7 @@ type Props = {
   fill: string;
   onPointerDown?: (e: React.PointerEvent) => void;
   stroke?: string;
-  strokeWidth: number;
+  strokeWidth?: number;
 };
 
 export default function Path({

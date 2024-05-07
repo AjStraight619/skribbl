@@ -5,11 +5,13 @@ import { CircleIcon } from "lucide-react";
 import { Color } from "@/types/type";
 import { colorToCss } from "@/lib/utils";
 import StrokeWidthButton from "../ui/stroke-width-button";
+import IconButton from "../icon-button";
 
 type StrokeSelectionProps = {
   strokeWidth: number;
-  setStrokeWidth: React.Dispatch<SetStateAction<number>>;
+  setStrokeWidth: (width: number) => void;
   lastUsedColor: Color;
+  isActive?: boolean;
 };
 
 export default function StrokeSelection({
@@ -21,15 +23,12 @@ export default function StrokeSelection({
   const strokeWidthOptions = [
     {
       strokeWidth: 5,
-      size: 10,
     },
     {
-      strokeWidth: 10,
-      size: 15,
+      strokeWidth: 7,
     },
     {
       strokeWidth: 15,
-      size: 20,
     },
   ];
 
@@ -41,8 +40,25 @@ export default function StrokeSelection({
   return (
     <Popover open={isPopoverOpen} onOpenChange={setPopoverOpen}>
       <PopoverTrigger asChild>
-        <Button size="icon" variant="secondary">
-          <CircleIcon size={strokeWidth * 2} fill={colorToCss(lastUsedColor)} />
+        <Button size="icon" variant={null}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            stroke={colorToCss(lastUsedColor)}
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            className="rounded-full"
+          >
+            <circle
+              cx="12.1"
+              cy="12.1"
+              r={strokeWidth}
+              fill={colorToCss(lastUsedColor)}
+            />
+          </svg>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-fit">
@@ -50,9 +66,9 @@ export default function StrokeSelection({
           {strokeWidthOptions.map((option, idx) => (
             <li key={idx}>
               <StrokeWidthButton
-                size={option.size}
+                strokeWidth={option.strokeWidth}
                 onClick={() => handleClick(option.strokeWidth)}
-                color={lastUsedColor}
+                lastUsedColor={lastUsedColor}
               />
             </li>
           ))}

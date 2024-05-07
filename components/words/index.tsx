@@ -8,7 +8,9 @@ import useInterval from "@/hooks/useInterval";
 
 export default function WordDisplay() {
   const { round, startNewRound } = useRound();
-  const { timer, timerActive } = round;
+  const { timer, timerActive, currentWord } = round;
+
+  console.log("current word: ", currentWord);
   const revealedChars = useStorage((root) => root.round.revealedChars);
   const game = useStorage((root) => root.game);
   const leader = useStorage((storage) =>

@@ -10,10 +10,11 @@ export default function ToolbarButton({
 }: ToolbarButtonProps) {
   return (
     <Button
+      className={`${isActive ? "hover:bg-transparent" : ""}`}
       size="icon"
       onClick={props.onClick}
       disabled={props.disabled}
-      variant={isActive ? "default" : "secondary"}
+      variant={isActive ? "outline" : "secondary"}
     >
       {props.children}
     </Button>

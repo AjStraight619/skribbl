@@ -1,11 +1,10 @@
 import { Color } from "@/types/type";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import ColorButton from "../ui/color-button";
-import ToolbarButton from "../ui/toolbar-button";
-import { PaintBucket, PaintBucketIcon, PaletteIcon } from "lucide-react";
-import { colorToCss } from "@/lib/utils";
+import { PaletteIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
+import { colorToCss } from "@/lib/utils";
 
 type ColorPickerProps = {
   setLastUsedColor: (color: Color) => void;
@@ -25,7 +24,7 @@ const colors = [
   { r: 92, g: 64, b: 51 },
 ];
 
-export default function ColorPicker({
+export default function ColorSelection({
   setLastUsedColor,
   lastUsedColor,
 }: ColorPickerProps) {
@@ -33,16 +32,31 @@ export default function ColorPicker({
     setLastUsedColor(color);
     setPopOverOpen(false);
   };
+
   const [isPopoverOpen, setPopOverOpen] = useState(false);
 
   return (
     <Popover open={isPopoverOpen} onOpenChange={setPopOverOpen}>
       <PopoverTrigger asChild>
-        <Button variant="secondary" onClick={() => setPopOverOpen(true)}>
-          <PaletteIcon />
+        <Button size="icon" variant={null} onClick={() => setPopOverOpen(true)}>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke={colorToCss(lastUsedColor)}
+            stroke-width="1"
+          >
+            <circle cx="13.5" cy="6.5" r=".5" fill="red" />
+            <circle cx="17.5" cy="10.5" r=".5" fill="orange" />
+            <circle cx="8.5" cy="7.5" r=".5" fill="yellow" />
+            <circle cx="6.5" cy="12.5" r=".5" fill="green" />
+            <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+          </svg>
         </Button>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent className="w-[10rem]">
         <ul className="flex flex-row items-center gap-2 flex-wrap">
           {colors.map((color, idx) => (
             <li key={idx}>

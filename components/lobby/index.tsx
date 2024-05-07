@@ -29,6 +29,9 @@ export default function Lobby({
   const { round } = useRound();
   const { currentRound } = round;
 
+  const players = useStorage((root) => root.players);
+  const numRounds = useStorage((root) => root.game.maxRounds);
+
   const isExistingUser = useCallback(
     (players: readonly PlayerType[], playerId: string) => {
       return players.some((player) => player.id === playerId);
@@ -36,31 +39,26 @@ export default function Lobby({
     []
   );
 
-  const players = useStorage((root) => root.players);
-  const numRounds = useStorage((root) => root.game.maxRounds);
-
-  useEffect(() => {
-    console.log("This compontent re-rendered: ", renderRef.current++);
-  }, []);
-
   const addPlayer = useMutation(
     ({ storage, self, setMyPresence }, playerId: string) => {
       const currentPlayers = storage.get("players").toImmutable();
+
       if (!isExistingUser(currentPlayers, playerId)) {
         const newPlayer = new LiveObject<PlayerType>({
           id: playerId,
           username: self.info.username,
           score: 0,
           avatar: self.info.avatar,
-          isLeader: currentPlayers.length === 0,
+          isLeader:
+            currentPlayers.length === 0 ||
+            currentPlayers.find((player) => player.id)?.isLeader ||
+            false,
           isDrawing: false,
           isTurn: false,
           didGuessWord: false,
           messages: [],
         });
-
-        setMyPresence({ isLeader: currentPlayers.length === 0 });
-
+        setMyPresence({ isLeader: newPlayer.toObject().isLeader });
         storage.get("players").push(newPlayer);
       }
     },

@@ -4,20 +4,36 @@ import { colorToCss } from "@/lib/utils";
 import { CircleIcon } from "lucide-react";
 
 type ColorButtonProps = {
-  color: Color;
   onClick: () => void;
-  size: number;
+  lastUsedColor: Color;
+  strokeWidth: number;
 };
 
 export default function StrokeWidthButton({
-  color,
   onClick,
-  size,
+  lastUsedColor,
+  strokeWidth,
 }: ColorButtonProps) {
-  const bgColor = colorToCss(color);
   return (
     <button onClick={onClick} className="rounded-full p-0">
-      <CircleIcon size={size} fill={bgColor} />
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        stroke={colorToCss(lastUsedColor)}
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        className="rounded-full"
+      >
+        <circle
+          cx="12.1"
+          cy="12.1"
+          r={strokeWidth}
+          fill={colorToCss(lastUsedColor)}
+        />
+      </svg>
     </button>
   );
 }

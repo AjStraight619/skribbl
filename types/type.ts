@@ -33,6 +33,7 @@ export type Message = {
   content: string;
   isClose: boolean;
   isCorrect: boolean;
+  timeStamp: number;
 };
 
 export type Round = {

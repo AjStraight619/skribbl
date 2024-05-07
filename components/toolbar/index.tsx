@@ -1,44 +1,47 @@
-import { CanvasMode, CanvasState, Color } from "@/types/type";
-import { Button } from "../ui/button";
-import { PencilIcon, RedoIcon, TrashIcon, UndoIcon } from "lucide-react";
-import ToolbarButton from "../ui/toolbar-button";
-import SelectionButton from "./selection-button";
-import { Separator } from "../ui/separator";
-import ColorPicker from "./color-picker";
-import { colorToCss } from "@/lib/utils";
-import StrokeSelection from "./stroke-selection";
-import { SetStateAction } from "react";
+import React from "react";
 
-type ToolbarProps = {
+import { CanvasMode, LayerType, CanvasState, Color } from "@/types/type";
+import styles from "./index.module.css";
+import SelectionButton from "./selection-button";
+import PencilButton from "./pencil-button";
+import RectangleButton from "./rectangle-button";
+import EllipseButton from "./ellipse-button";
+import StrokeSelection from "./stroke-selection";
+import ColorSelection from "./color-selection";
+import { Separator } from "../ui/separator";
+import IconButton from "../icon-button";
+import { useDeleteLayers } from "@/hooks/useDeleteLayers";
+import { Trash2Icon } from "lucide-react";
+
+type Props = {
   canvasState: CanvasState;
+  strokeWidth: number;
+  setStrokeWidth: (width: number) => void;
   setCanvasState: (newState: CanvasState) => void;
   setLastUsedColor: (color: Color) => void;
   lastUsedColor: Color;
-  strokeWidth: number;
-  setStrokeWidth: React.Dispatch<SetStateAction<number>>;
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
   canRedo: boolean;
-  deleteAllLayers: () => void;
 };
 
-export default function Toolbar({
+export default function ToolsBar({
   canvasState,
   setCanvasState,
-  setLastUsedColor,
   lastUsedColor,
+  setLastUsedColor,
   strokeWidth,
   setStrokeWidth,
   undo,
   redo,
   canUndo,
   canRedo,
-  deleteAllLayers,
-}: ToolbarProps) {
+}: Props) {
+  const deleteAllLayers = useDeleteLayers();
   return (
-    <div className="absolute bottom-2 transform -translate-x-1/2 left-1/2 p-4 bg-gray-50 rounded-lg shadow-xl h-16">
-      <div className="h-full flex items-center gap-2">
+    <div className="absolute bottom-2 -translate-x-1/2 left-1/2 p-2 bg-white shadow-xl rounded-lg">
+      <div className="flex items-center">
         <SelectionButton
           isActive={
             canvasState.mode === CanvasMode.None ||
@@ -49,33 +52,50 @@ export default function Toolbar({
           }
           onClick={() => setCanvasState({ mode: CanvasMode.None })}
         />
-
-        <ToolbarButton
+        <PencilButton
           isActive={canvasState.mode === CanvasMode.Pencil}
           onClick={() => setCanvasState({ mode: CanvasMode.Pencil })}
-          size="icon"
-        >
-          <PencilIcon fill={colorToCss(lastUsedColor)} />
-        </ToolbarButton>
-        <ColorPicker
           lastUsedColor={lastUsedColor}
-          setLastUsedColor={setLastUsedColor}
+        />
+        <RectangleButton
+          isActive={
+            canvasState.mode === CanvasMode.Inserting &&
+            canvasState.layerType === LayerType.Rectangle
+          }
+          onClick={() =>
+            setCanvasState({
+              mode: CanvasMode.Inserting,
+              layerType: LayerType.Rectangle,
+            })
+          }
+          lastUsedColor={lastUsedColor}
+        />
+        <EllipseButton
+          isActive={
+            canvasState.mode === CanvasMode.Inserting &&
+            canvasState.layerType === LayerType.Ellipse
+          }
+          onClick={() =>
+            setCanvasState({
+              mode: CanvasMode.Inserting,
+              layerType: LayerType.Ellipse,
+            })
+          }
+          lastUsedColor={lastUsedColor}
         />
         <StrokeSelection
           lastUsedColor={lastUsedColor}
-          strokeWidth={strokeWidth}
           setStrokeWidth={setStrokeWidth}
+          strokeWidth={strokeWidth}
         />
-        <Separator orientation="vertical" />
-        {/* <ToolbarButton disabled={!canUndo} onClick={undo} size="icon">
-          <UndoIcon />
-        </ToolbarButton>
-        <ToolbarButton disabled={!canRedo} onClick={redo} size="icon">
-          <RedoIcon />
-        </ToolbarButton> */}
-        <ToolbarButton onClick={deleteAllLayers} size="icon">
-          <TrashIcon />
-        </ToolbarButton>
+        <ColorSelection
+          lastUsedColor={lastUsedColor}
+          setLastUsedColor={setLastUsedColor}
+        />
+        <Separator orientation="vertical" className="h-full" />
+        <IconButton onClick={deleteAllLayers}>
+          <Trash2Icon />
+        </IconButton>
       </div>
     </div>
   );
