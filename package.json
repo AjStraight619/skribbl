@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.0.0",
+    "@clerk/nextjs": "^5.0.7",
     "@hookform/resolvers": "^3.3.4",
     "@liveblocks/client": "^1.12.0",
     "@liveblocks/node": "^1.12.0",
