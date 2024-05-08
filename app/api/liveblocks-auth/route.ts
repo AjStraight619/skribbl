@@ -1,33 +1,26 @@
-import { auth } from "@/auth";
 import { Liveblocks } from "@liveblocks/node";
 import { NextRequest, NextResponse } from "next/server";
-import { getUser } from "@/actions/user";
+import { auth, currentUser } from "@clerk/nextjs/server";
 const liveblocks = new Liveblocks({
   secret: process.env.LIVEBLOCKS_SECRET_KEY!,
 });
 
 export async function POST(request: NextRequest) {
   const { room } = await request.json();
-  const userSession = await auth();
-  if (!userSession || !userSession?.user?.id) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-  const userId = userSession.user.id;
-  const user = await getUser(userId);
 
-  console.log("user: ", user);
+  const user = await currentUser();
+  const {userId} = auth()
 
-  if (!user) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
+  if (!userId) return NextResponse.redirect(new URL('/sign-in', request.url))
+
 
   const userMetadata = {
-    username: user.displayName || "Player",
-    avatar: user.avatar || "",
+    username: user?.firstName || "Player",
+    avatar: user?.imageUrl || "",
   };
 
   const session = liveblocks.prepareSession(
-    user.id,
+    userId,
     { userInfo: userMetadata } // Optional
   );
 

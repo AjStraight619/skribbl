@@ -82,7 +82,6 @@ export function PreGameLobby() {
               value={round.timer}
               min={45}
               max={100}
-              defaultValue={round.timePerRound}
             />
           </div>
           <div>
