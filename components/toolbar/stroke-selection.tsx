@@ -10,14 +10,14 @@ import IconButton from "../icon-button";
 type StrokeSelectionProps = {
   strokeWidth: number;
   setStrokeWidth: (width: number) => void;
-  lastUsedColor: Color;
+  color: string;
   isActive?: boolean;
 };
 
 export default function StrokeSelection({
   strokeWidth,
   setStrokeWidth,
-  lastUsedColor,
+  color,
 }: StrokeSelectionProps) {
   const [isPopoverOpen, setPopoverOpen] = useState(false);
   const strokeWidthOptions = [
@@ -46,18 +46,13 @@ export default function StrokeSelection({
             width="24"
             height="24"
             viewBox="0 0 24 24"
-            stroke={colorToCss(lastUsedColor)}
+            stroke={color}
             stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
             className="rounded-full"
           >
-            <circle
-              cx="12.1"
-              cy="12.1"
-              r={strokeWidth}
-              fill={colorToCss(lastUsedColor)}
-            />
+            <circle cx="12.1" cy="12.1" r={strokeWidth} fill={color} />
           </svg>
         </Button>
       </PopoverTrigger>
@@ -68,7 +63,7 @@ export default function StrokeSelection({
               <StrokeWidthButton
                 strokeWidth={option.strokeWidth}
                 onClick={() => handleClick(option.strokeWidth)}
-                lastUsedColor={lastUsedColor}
+                color={color}
               />
             </li>
           ))}

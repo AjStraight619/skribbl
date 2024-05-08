@@ -1,7 +1,6 @@
 import React from "react";
 
 import { CanvasMode, LayerType, CanvasState, Color } from "@/types/type";
-import styles from "./index.module.css";
 import SelectionButton from "./selection-button";
 import PencilButton from "./pencil-button";
 import RectangleButton from "./rectangle-button";
@@ -12,27 +11,29 @@ import { Separator } from "../ui/separator";
 import IconButton from "../icon-button";
 import { useDeleteLayers } from "@/hooks/useDeleteLayers";
 import { Trash2Icon } from "lucide-react";
+import { HexColorPicker } from "react-colorful";
 
 type Props = {
   canvasState: CanvasState;
   strokeWidth: number;
   setStrokeWidth: (width: number) => void;
   setCanvasState: (newState: CanvasState) => void;
-  setLastUsedColor: (color: Color) => void;
-  lastUsedColor: Color;
+
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
   canRedo: boolean;
+  color: string;
+  setColor: (color: string) => void;
 };
 
 export default function ToolsBar({
   canvasState,
   setCanvasState,
-  lastUsedColor,
-  setLastUsedColor,
   strokeWidth,
   setStrokeWidth,
+  color,
+  setColor,
   undo,
   redo,
   canUndo,
@@ -51,11 +52,12 @@ export default function ToolsBar({
             canvasState.mode === CanvasMode.Resizing
           }
           onClick={() => setCanvasState({ mode: CanvasMode.None })}
+          color={color}
         />
         <PencilButton
           isActive={canvasState.mode === CanvasMode.Pencil}
           onClick={() => setCanvasState({ mode: CanvasMode.Pencil })}
-          lastUsedColor={lastUsedColor}
+          color={color}
         />
         <RectangleButton
           isActive={
@@ -68,7 +70,7 @@ export default function ToolsBar({
               layerType: LayerType.Rectangle,
             })
           }
-          lastUsedColor={lastUsedColor}
+          color={color}
         />
         <EllipseButton
           isActive={
@@ -81,17 +83,15 @@ export default function ToolsBar({
               layerType: LayerType.Ellipse,
             })
           }
-          lastUsedColor={lastUsedColor}
+          color={color}
         />
         <StrokeSelection
-          lastUsedColor={lastUsedColor}
+          color={color}
           setStrokeWidth={setStrokeWidth}
           strokeWidth={strokeWidth}
         />
-        <ColorSelection
-          lastUsedColor={lastUsedColor}
-          setLastUsedColor={setLastUsedColor}
-        />
+        <ColorSelection color={color} setColor={setColor} />
+
         <Separator orientation="vertical" className="h-full" />
         <IconButton onClick={deleteAllLayers}>
           <Trash2Icon />

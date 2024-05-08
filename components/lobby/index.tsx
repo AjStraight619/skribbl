@@ -1,6 +1,7 @@
 import {
   useMutation,
   useOthersListener,
+  useRoom,
   useSelf,
   useStorage,
 } from "@/liveblocks.config";
@@ -25,9 +26,9 @@ export default function Lobby({
   showRound = true,
 }: LobbyProps) {
   const self = useSelf();
-  const renderRef = useRef(0);
   const { round } = useRound();
   const { currentRound } = round;
+  const room = useRoom();
 
   const players = useStorage((root) => root.players);
   const numRounds = useStorage((root) => root.game.maxRounds);
@@ -113,7 +114,7 @@ export default function Lobby({
           Round: {currentRound} / {numRounds}
         </p>
       )}
-      <Card>
+      <Card className="bg-background">
         <CardHeader>
           <CardTitle className="text-center font-poppins tracking-widest">
             Players

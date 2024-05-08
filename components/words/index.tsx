@@ -1,7 +1,5 @@
 "use client";
 import { useRound } from "@/hooks/useRound";
-import { getErrorMessage } from "@/lib/utils";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { useMutation, useSelf, useStorage } from "@/liveblocks.config";
 import useInterval from "@/hooks/useInterval";
@@ -53,12 +51,10 @@ export default function WordDisplay() {
       initialDelay = round.get("timePerRound") * 0.5;
     }
 
-    // Check if it's too early to start revealing characters
     if (currentTime > round.get("timePerRound") - initialDelay) {
       return; // Don't reveal any characters yet
     }
 
-    // Reveal characters based on word length and the current time
     const revealedCount = revealedChars.filter((char) => char !== "").length;
     let maxReveals;
     if (currentWord.length <= 5) {
@@ -69,7 +65,6 @@ export default function WordDisplay() {
       maxReveals = 3; // Max 3 reveals for longer words
     }
 
-    // Check if maximum reveals have been reached
     if (revealedCount >= maxReveals) {
       return; // No more reveals allowed
     }

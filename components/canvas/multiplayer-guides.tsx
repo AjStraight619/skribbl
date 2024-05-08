@@ -48,7 +48,7 @@ function Drafts() {
               x={0}
               y={0}
               points={other.pencilDraft}
-              fill={other.penColor ? colorToCss(other.penColor) : "#CCC"}
+              fill={other.penColor ?? "#000000"}
               strokeWidth={other.strokeWidth ?? 5}
             />
           );

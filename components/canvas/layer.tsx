@@ -41,7 +41,7 @@ const Layer = memo(
             onPointerDown={(e) => onLayerPointerDown(e, id)}
             x={layer.x}
             y={layer.y}
-            fill={layer.fill ? colorToCss(layer.fill) : "#CCC"}
+            fill={layer.fill}
             stroke={selectionColor}
             strokeWidth={layer.strokeWidth}
           />

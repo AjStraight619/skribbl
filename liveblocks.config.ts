@@ -68,7 +68,7 @@ type Presence = {
   selection: string[];
   cursor: Point | null;
   pencilDraft: [x: number, y: number, pressure: number][] | null;
-  penColor: Color | null;
+  penColor: string | null;
   strokeWidth: number | null;
   isLeader: boolean;
   messages: Message[];

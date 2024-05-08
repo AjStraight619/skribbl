@@ -1,25 +1,25 @@
 import { memo } from "react";
 
-import IconButton from "@/components/ui/toolbar-button";
-import { Camera, Color } from "@/types/type";
+import { Camera } from "@/types/type";
 import styles from "@/components/toolbar/selection-tools.module.css";
 import useSelectionBounds from "@/hooks/useSelectionBounds";
 import { useSelf, useMutation } from "@/liveblocks.config";
-import ColorPicker from "./ColorPicker";
 import useDeleteSelectedLayers from "@/hooks/useDeleteSelectedLayers";
+import { HexColorPicker } from "react-colorful";
+import "./react-colorful.css";
 
 type SelectionToolsProps = {
   isAnimated: boolean;
   camera: Camera;
-  lastUsedColor: Color;
-  setLastUsedColor: (color: Color) => void;
+  setColor: (color: string) => void;
+  color: string;
 };
 
 function SelectionTools({
   isAnimated,
   camera,
-  setLastUsedColor,
-  lastUsedColor,
+  color,
+  setColor,
 }: SelectionToolsProps) {
   const selection = useSelf((me) => me.presence.selection);
 
@@ -76,17 +76,21 @@ function SelectionTools({
    * Change the color of all the selected layers
    */
   const setFill = useMutation(
-    ({ storage }, fill: Color) => {
+    ({ storage }, fill: string) => {
       const liveLayers = storage.get("layers");
-      setLastUsedColor(fill);
+      // setColor(fill);
       selection.forEach((id) => {
         liveLayers.get(id)?.set("fill", fill);
       });
     },
-    [selection, setLastUsedColor]
+    [selection, setColor]
   );
 
   const deleteLayers = useDeleteSelectedLayers();
+
+  const handleSelectionColorChange = (color: string) => {
+    setFill(color);
+  };
 
   const selectionBounds = useSelectionBounds();
   if (!selectionBounds) {
@@ -97,13 +101,15 @@ function SelectionTools({
   const y = selectionBounds.y + camera.y;
   return (
     <div
-      className={styles.selection_inspector}
+      className="selection-container"
       style={{
         transform: `translate(calc(${x}px - 50%), calc(${y - 16}px - 100%))`,
       }}
     >
-      <ColorPicker onChange={setFill} />
+      <HexColorPicker color={color} onChange={handleSelectionColorChange} />
 
+      {/* <ColorPicker onChange={setFill} /> */}
+      {/* 
       <div>
         <IconButton onClick={moveToFront}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -139,7 +145,7 @@ function SelectionTools({
             />
           </svg>
         </IconButton>
-      </div>
+      </div> */}
     </div>
   );
 }

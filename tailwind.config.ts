@@ -57,6 +57,10 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        backgroundImage: {
+          canvas:
+            "repeating-linear-gradient(45deg, #ececec, #ececec 20px, #ffffff 20px, #ffffff 40px)",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",

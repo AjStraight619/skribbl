@@ -68,7 +68,7 @@ export type RectangleLayer = {
   height: number;
   width: number;
   strokeWidth?: number;
-  fill: Color;
+  fill: string;
 };
 
 export type EllipseLayer = {
@@ -78,7 +78,7 @@ export type EllipseLayer = {
   height: number;
   width: number;
   strokeWidth?: number;
-  fill: Color;
+  fill: string;
 };
 
 export type PathLayer = {
@@ -89,7 +89,7 @@ export type PathLayer = {
   height: number;
   // Could be computed based on points
   width: number;
-  fill: Color;
+  fill: string;
   strokeWidth: number;
   points: number[][];
 };

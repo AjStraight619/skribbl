@@ -185,7 +185,7 @@ export function getSvgPathFromStroke(stroke: number[][]) {
 
 export function penPointsToPathLayer(
   points: number[][],
-  color: Color,
+  color: string,
   strokeWidth: number
 ): PathLayer {
   if (points.length < 2) {

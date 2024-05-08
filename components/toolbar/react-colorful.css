@@ -1,0 +1,16 @@
+.selection-container {
+    background-color: #ffffff;  /* bg-white */
+    position: absolute;         /* absolute */
+    padding: 1rem;              /* p-4 (padding of 1rem) */
+    border-radius: 0.5rem;      /* rounded-lg */
+    /* shadow-xl */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+
+
+.selection-container .react-colorful {
+    height: 130px; /* customized height */
+}
+

@@ -6,6 +6,13 @@
     :root {
       --background: 0 0% 100%;
       --foreground: 0 0% 3.9%;
+      --background-image: repeating-linear-gradient(
+        45deg,
+        #f4f4f4,
+        #f4f4f4 10px,
+        #f9f9f9 10px,
+        #f9f9f9 20px
+      )
 
       --card: 0 0% 100%;
       --card-foreground: 0 0% 3.9%;
@@ -33,6 +40,7 @@
       --ring: 0 0% 3.9%;
 
       --radius: 0.5rem;
+
       --color-surface-canvas: #eee;
       --color-surface-panel: #fff;
       --color-surface-subtle: #f3f3f3;
@@ -86,5 +94,10 @@
     }
     body {
       @apply bg-background text-foreground;
+      background-image: repeating-linear-gradient(
+        45deg,
+        #f8f0e3, #f8f0e3 10px,
+        #efe8d9 10px, #efe8d9 20px
+      );    
     }
   }

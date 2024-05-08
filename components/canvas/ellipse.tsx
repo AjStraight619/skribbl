@@ -1,5 +1,4 @@
 import { EllipseLayer } from "@/types/type";
-import { colorToCss } from "@/lib/utils";
 
 type Props = {
   id: string;
@@ -24,7 +23,7 @@ export default function Ellipse({
       cy={layer.height / 2}
       rx={layer.width / 2}
       ry={layer.height / 2}
-      fill={layer.fill ? colorToCss(layer.fill) : "#CCC"}
+      fill={layer.fill}
       stroke={selectionColor || "transparent"}
       strokeWidth="1"
     />

@@ -51,11 +51,7 @@ export default function Canvas() {
   const canUndo = useCanUndo();
   const canRedo = useCanRedo();
 
-  const [lastUsedColor, setLastUsedColor] = useState<Color>({
-    r: 252,
-    g: 142,
-    b: 42,
-  });
+  const [color, setColor] = useState("#000000");
 
   const [strokeWidth, setStrokeWidth] = useState<number>(5);
 
@@ -116,7 +112,7 @@ export default function Canvas() {
         y: position.y,
         height: 100,
         width: 100,
-        fill: lastUsedColor,
+        fill: color,
       });
       liveLayerIds.push(layerId);
       liveLayers.set(layerId, layer);
@@ -124,7 +120,7 @@ export default function Canvas() {
       setMyPresence({ selection: [layerId] }, { addToHistory: true });
       setState({ mode: CanvasMode.None });
     },
-    [lastUsedColor]
+    [color]
   );
 
   /**
@@ -146,9 +142,7 @@ export default function Canvas() {
       const id = nanoid();
       liveLayers.set(
         id,
-        new LiveObject(
-          penPointsToPathLayer(pencilDraft, lastUsedColor, strokeWidth)
-        )
+        new LiveObject(penPointsToPathLayer(pencilDraft, color, strokeWidth))
       );
 
       const liveLayerIds = storage.get("layerIds");
@@ -156,7 +150,7 @@ export default function Canvas() {
       setMyPresence({ pencilDraft: null });
       setState({ mode: CanvasMode.Pencil });
     },
-    [lastUsedColor, strokeWidth]
+    [color, strokeWidth]
   );
 
   /**
@@ -226,10 +220,11 @@ export default function Canvas() {
     ({ setMyPresence }, point: Point, pressure: number) => {
       setMyPresence({
         pencilDraft: [[point.x, point.y, pressure]],
-        penColor: lastUsedColor,
+        penColor: color,
+        strokeWidth: strokeWidth,
       });
     },
-    [lastUsedColor]
+    [color, strokeWidth]
   );
 
   /**
@@ -425,9 +420,9 @@ export default function Canvas() {
             canvasState.mode !== CanvasMode.Translating &&
             canvasState.mode !== CanvasMode.Resizing
           }
-          lastUsedColor={lastUsedColor}
+          color={color}
+          setColor={setColor}
           camera={camera}
-          setLastUsedColor={setLastUsedColor}
         />
         <svg
           className={"h-screen w-full"}
@@ -473,7 +468,7 @@ export default function Canvas() {
             {pencilDraft != null && pencilDraft.length > 0 && (
               <Path
                 points={pencilDraft}
-                fill={colorToCss(lastUsedColor)}
+                fill={color}
                 x={0}
                 y={0}
                 strokeWidth={strokeWidth}
@@ -487,12 +482,12 @@ export default function Canvas() {
         strokeWidth={strokeWidth}
         setStrokeWidth={setStrokeWidth}
         setCanvasState={setState}
-        setLastUsedColor={setLastUsedColor}
-        lastUsedColor={lastUsedColor}
         canRedo={canRedo}
         canUndo={canUndo}
         undo={history.undo}
         redo={history.redo}
+        color={color}
+        setColor={setColor}
       />
     </>
   );

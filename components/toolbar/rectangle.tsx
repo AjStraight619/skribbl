@@ -26,7 +26,7 @@ export default function Rectangle({
       y={0}
       width={width}
       height={height}
-      fill={fill ? colorToCss(fill) : "#CCC"}
+      fill={fill}
       strokeWidth={1}
       stroke={selectionColor || "transparent"}
     />

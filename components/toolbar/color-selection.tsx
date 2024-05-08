@@ -5,10 +5,11 @@ import { PaletteIcon } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import { colorToCss } from "@/lib/utils";
+import { HexColorPicker } from "react-colorful";
 
 type ColorPickerProps = {
-  setLastUsedColor: (color: Color) => void;
-  lastUsedColor: Color;
+  color: string;
+  setColor: (color: string) => void;
 };
 
 const colors = [
@@ -24,15 +25,7 @@ const colors = [
   { r: 92, g: 64, b: 51 },
 ];
 
-export default function ColorSelection({
-  setLastUsedColor,
-  lastUsedColor,
-}: ColorPickerProps) {
-  const handleColorChange = (color: Color) => {
-    setLastUsedColor(color);
-    setPopOverOpen(false);
-  };
-
+export default function ColorSelection({ color, setColor }: ColorPickerProps) {
   const [isPopoverOpen, setPopOverOpen] = useState(false);
 
   return (
@@ -45,7 +38,7 @@ export default function ColorSelection({
             height="24"
             viewBox="0 0 24 24"
             fill="none"
-            stroke={colorToCss(lastUsedColor)}
+            stroke={color}
             stroke-width="1"
           >
             <circle cx="13.5" cy="6.5" r=".5" fill="red" />
@@ -56,17 +49,8 @@ export default function ColorSelection({
           </svg>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[10rem]">
-        <ul className="flex flex-row items-center gap-2 flex-wrap">
-          {colors.map((color, idx) => (
-            <li key={idx}>
-              <ColorButton
-                color={color}
-                onClick={() => handleColorChange(color)}
-              />
-            </li>
-          ))}
-        </ul>
+      <PopoverContent className="w-fit">
+        <HexColorPicker color={color} onChange={setColor} />
       </PopoverContent>
     </Popover>
   );

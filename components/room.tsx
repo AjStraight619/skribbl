@@ -5,7 +5,6 @@ import { RoomProvider } from "../liveblocks.config";
 import { ClientSideSuspense } from "@liveblocks/react";
 import { LiveList, LiveMap, LiveObject } from "@liveblocks/client";
 import { Layer, Player } from "@/types/type";
-import { useRound } from "@/hooks/useRound";
 
 type RoomProps = {
   children: ReactNode;
@@ -20,7 +19,7 @@ export function Room({ children, roomId }: RoomProps) {
         selection: [],
         cursor: null,
         pencilDraft: null,
-        penColor: null,
+        penColor: "#000000",
         strokeWidth: null,
         isLeader: false,
         messages: [],

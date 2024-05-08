@@ -98,7 +98,7 @@ export default function Chat() {
   }, [allMessages]);
 
   return (
-    <Card className="absolute transform -translate-y-1/4 top-1/4 right-4 min-h-[20rem] max-h-[30rem] flex flex-col select-none shadow-lg">
+    <Card className="absolute transform -translate-y-1/4 top-1/4 right-4 min-h-[20rem] max-h-[30rem] flex flex-col select-none shadow-lg bg-background">
       <CardHeader>
         <CardTitle className="text-center font-poppins tracking-widest">
           Chat
