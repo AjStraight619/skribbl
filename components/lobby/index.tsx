@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import Player from "./player";
 import { useCallback, useEffect, useRef } from "react";
 import { toast } from "../ui/use-toast";
-import { LiveObject } from "@liveblocks/client";
+import { LiveObject, shallow } from "@liveblocks/client";
 import { Player as PlayerType } from "@/types/type";
 import { cn } from "@/lib/utils";
 import { useRound } from "@/hooks/useRound";
@@ -28,9 +28,8 @@ export default function Lobby({
   const self = useSelf();
   const { round } = useRound();
   const { currentRound } = round;
-  const room = useRoom();
 
-  const players = useStorage((root) => root.players);
+  const players = useStorage((root) => root.players, shallow);
   const numRounds = useStorage((root) => root.game.maxRounds);
 
   const isExistingUser = useCallback(
@@ -83,12 +82,14 @@ export default function Lobby({
           duration: 1000,
           description: `${user.info.username} joined up!`,
         });
+        break;
       case "leave":
         toast({
           duration: 1000,
           description: `${user.info.username} bounced`,
         });
         removePlayer(user.id);
+        break;
     }
   });
 
@@ -114,7 +115,7 @@ export default function Lobby({
           Round: {currentRound} / {numRounds}
         </p>
       )}
-      <Card className="bg-background">
+      <Card>
         <CardHeader>
           <CardTitle className="text-center font-poppins tracking-widest">
             Players

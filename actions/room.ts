@@ -1,5 +1,6 @@
 "use server";
 
+import { db } from "@/lib/db";
 import { CreateRoomSchema } from "@/lib/schemas";
 import { z } from "zod";
 
@@ -14,4 +15,10 @@ export async function createRoom(values: z.infer<typeof CreateRoomSchema>) {
   }
 
   const { displayName, roomName, numPlayers, openRoom } = validatedValues.data;
+
+  const newRoom = await db.room.create({
+    data: {
+      name: roomName,
+    },
+  });
 }

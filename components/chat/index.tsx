@@ -30,10 +30,6 @@ export default function Chat() {
     user.map((user) => user.presence.messages)
   ).flat();
 
-  const othersMessagesMapped = useOthersMapped(
-    (other) => other.presence.messages
-  );
-
   const allMessages = [...myMessages, ...othersMessages].sort(
     (a, b) => a.timeStamp - b.timeStamp
   );

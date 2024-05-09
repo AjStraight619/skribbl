@@ -24,6 +24,7 @@ export function Room({ children, roomId }: RoomProps) {
         isLeader: false,
         messages: [],
         didGuessWord: false,
+        hasHadTurn: false,
       }}
       initialStorage={{
         layers: new LiveMap<string, LiveObject<Layer>>(),

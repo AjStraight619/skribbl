@@ -73,6 +73,7 @@ type Presence = {
   isLeader: boolean;
   messages: Message[];
   didGuessWord: boolean;
+  hasHadTurn: boolean;
 };
 
 // Storage represents the shared document that persists in the Room, even after

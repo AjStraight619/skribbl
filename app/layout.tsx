@@ -35,7 +35,8 @@ export default function RootLayout({
             fontPoppins.variable
           )}
         >
-          {children}
+          <main>{children}</main>
+
           <Toaster />
         </body>
       </html>

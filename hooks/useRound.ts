@@ -4,15 +4,15 @@ import { LiveObject } from "@liveblocks/client";
 import { useCallback, useState } from "react";
 import { useDeleteLayers } from "./useDeleteLayers";
 
-type UseRoundReturnType = [
-  { currentRound: number; currentWord: string },
-  () => Promise<void>
-];
+type UseRoundOptions = {
+  onRoundComplete?: ({ storage }: { storage: LiveObject<Storage> }) => void;
+};
 
-export function useRound() {
+export function useRound(options?: UseRoundOptions) {
   const round = useStorage((root) => root.round);
   const deleteAllLayers = useDeleteLayers();
   const wordDifficulty = useStorage((root) => root.game.wordDifficuly);
+  // const { onRoundComplete } = options;
 
   const newRound = useMutation(({ storage }, newWord: string) => {
     deleteAllLayers();

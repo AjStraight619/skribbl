@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 
 export function useWord() {
   const [word, setWord] = useState("");
-  const [revealed, setRevealed] = useState(new Array(word.length).fill(false));
   const [error, setError] = useState("");
 
   useEffect(() => {

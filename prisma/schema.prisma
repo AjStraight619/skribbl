@@ -13,39 +13,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  userName  String?  @unique
-  displayName String?
-  avatar    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  playerId  String?  @unique
-  leaderboard    LeaderBoard?
+model Player {
+  id           String       @id @default(cuid())
+  userId       String
+  name         String
+  username     String       @unique
+  leaderboard  LeaderBoard? 
 }
-
 
 model Room {
-  id           String         @id @default(uuid())
+  id           String    @id @default(cuid())
   name         String
-  currentRound Int
-  totalRounds  Int
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-
+  isOpen       Boolean
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
-
 model LeaderBoard {
-  id                String    @id @default(uuid())
-  userId            String    @unique
-  totalScore        Int
-  totalRoundsPlayed Int
+  id                  String   @id @default(cuid())
+  playerId            String   @unique
+  totalScore          Int
+  totalRoundsPlayed   Int
   averageScorePerRound Int
-  user              User      @relation(fields: [userId], references: [id])
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-} 
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  player              Player   @relation(fields: [playerId], references: [id])
+}
