@@ -20,16 +20,16 @@ export function useRound(options?: UseRoundOptions) {
   // const { onRoundComplete } = options;
 
   const newRound = useMutation(({ storage }, newWord: string) => {
-    deleteAllLayers();
     const game = storage.get("game");
     const maxRound = game.get("maxRounds");
+    const roundInfo = storage.get("round");
     storage
       .get("players")
       .toImmutable()
       .map((player) => player.hasHadTurn === false);
-    const roundInfo = storage.get("round");
     if (roundInfo.get("currentRound") === maxRound) {
       game.set("isFinished", true);
+      return;
     }
     roundInfo.set("currentRound", roundInfo.get("currentRound") + 1);
     roundInfo.set("currentWord", newWord.toUpperCase());
@@ -45,9 +45,8 @@ export function useRound(options?: UseRoundOptions) {
   const endTurnAndStartNew = useMutation(({ storage }, newWord: string) => {
     const players = storage.get("players");
 
-    console.log("new word: ", newWord);
-
     const currentTurnIndex = players.findIndex((p) => p.get("isDrawing"));
+    deleteAllLayers();
     players.get(currentTurnIndex)?.set("isDrawing", false);
     players.get(currentTurnIndex)?.set("hasHadTurn", true);
 

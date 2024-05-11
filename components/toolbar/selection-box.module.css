@@ -1,19 +1,19 @@
 .selection {
   fill: transparent;
-  stroke: var(--color-primary);
+  stroke: blue;
   stroke-width: 1px;
   pointer-events: none;
 }
 
 .selection_handle {
-  fill: white;
-  stroke: var(--color-primary);
+  fill: blue;
+  stroke: blue;
   stroke-width: 1px;
 }
 
 .selection_net {
-  fill: var(--color-primary);
+  fill: blue;
   fill-opacity: 0.05;
-  stroke: var(--color-primary);
+  stroke: blue;
   stroke-width: 0.5;
 }

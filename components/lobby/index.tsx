@@ -1,5 +1,6 @@
 import {
   useMutation,
+  useOthers,
   useOthersListener,
   useRoom,
   useSelf,
@@ -7,13 +8,11 @@ import {
 } from "@/liveblocks.config";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import Player from "./player";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect } from "react";
 import { toast } from "../ui/use-toast";
-import { LiveObject, shallow } from "@liveblocks/client";
+import { LiveObject } from "@liveblocks/client";
 import { Player as PlayerType } from "@/types/type";
 import { cn } from "@/lib/utils";
-import { useRound } from "@/hooks/useRound";
-import { useUser } from "@clerk/nextjs";
 
 type LobbyProps = {
   className?: string;
@@ -29,7 +28,6 @@ export default function Lobby({
   const self = useSelf();
   const currentRound = useStorage((root) => root.round.currentRound);
 
-
   const players = useStorage((root) => root.players);
   const numRounds = useStorage((root) => root.game.maxRounds);
 
@@ -40,25 +38,27 @@ export default function Lobby({
     []
   );
 
+  const others = useOthers();
+
   const addPlayer = useMutation(
     ({ storage, self, setMyPresence }, playerId: string) => {
       const currentPlayers = storage.get("players").toImmutable();
 
-      if (!isExistingUser(currentPlayers, playerId)) {
-        const newPlayer = new LiveObject<PlayerType>({
-          id: playerId,
-          username: self.info.username,
-          score: 0,
-          avatar: self.info.avatar,
-          isLeader: currentPlayers.length === 0,
-          isDrawing: false,
-          isTurn: false,
-          didGuessWord: false,
-          messages: [],
-          hasHadTurn: false,
-        });
-        storage.get("players").push(newPlayer);
-      }
+      const playerExists = currentPlayers.some((p) => p.id === self.id);
+      if (playerExists) return;
+      const newPlayer = new LiveObject<PlayerType>({
+        id: playerId,
+        username: self.info.username,
+        score: 0,
+        avatar: self.info.avatar,
+        isLeader: others.length === 0,
+        isDrawing: false,
+        isTurn: false,
+        didGuessWord: false,
+        messages: [],
+        hasHadTurn: false,
+      });
+      storage.get("players").push(newPlayer);
     },
     []
   );

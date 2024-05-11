@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
 import { useGameTimer } from "@/hooks/useGameTimer";
 
 export default function WordDisplay() {
-  const { startNewTurn } = useRound();
+  const { startNewTurn, startNewRound } = useRound();
 
   // const timerInfo = useStorage((root) => ({
   //   timer: root.round.timer,
@@ -118,6 +118,11 @@ export default function WordDisplay() {
   //   }
   // }, []);
 
+  const updateScore = useMutation(({ storage, self }) => {
+    const player = storage.get("players").find((p) => p.get("id") === self.id);
+    player?.set("score", player.get("score") + 20);
+  }, []);
+
   if (!isStarted) return;
 
   return (
@@ -133,8 +138,10 @@ export default function WordDisplay() {
           </div>
         ))}
         <div className="ml-4 flex items-center">
-          <Button onClick={() => startNewTurn()}>New Turn</Button>
+          <Button onClick={() => startNewRound()}>New Round</Button>
           <Button onClick={() => clearGameStorage()}>Reset game</Button>
+          <Button onClick={() => updateScore()}>Update Score</Button>
+
           <span className="ml-2">{timer}</span>
         </div>
       </div>

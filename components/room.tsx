@@ -6,6 +6,16 @@ import { ClientSideSuspense } from "@liveblocks/react";
 import { LiveList, LiveMap, LiveObject } from "@liveblocks/client";
 import { Layer, Player } from "@/types/type";
 
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
+
 type RoomProps = {
   children: ReactNode;
   roomId: string;
@@ -48,9 +58,11 @@ export function Room({ children, roomId }: RoomProps) {
         }),
       }}
     >
-      <ClientSideSuspense fallback={<div>Loading…</div>}>
-        {() => children}
-      </ClientSideSuspense>
+      <QueryClientProvider client={queryClient}>
+        <ClientSideSuspense fallback={<div>Loading…</div>}>
+          {() => children}
+        </ClientSideSuspense>
+      </QueryClientProvider>
     </RoomProvider>
   );
 }

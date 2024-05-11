@@ -15,7 +15,7 @@ export default function IconButton({
 }: Props) {
   return (
     <button
-      className={`${styles.button} ${isActive ? styles.button_active : ""}`}
+      className={`${styles.button} ${isActive ? "bg-slate-300/90" : ""}`}
       onClick={onClick}
       disabled={disabled}
     >

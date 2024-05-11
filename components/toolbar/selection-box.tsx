@@ -12,8 +12,6 @@ const HANDLE_WIDTH = 8;
 
 const SelectionBox = memo(
   ({ onResizeHandlePointerDown }: SelectionBoxProps) => {
-    // We should show resize handles if exactly one shape is selected and it's
-    // not a path layer
     const soleLayerId = useSelf((me) =>
       me.presence.selection.length === 1 ? me.presence.selection[0] : null
     );
