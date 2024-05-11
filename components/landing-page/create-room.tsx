@@ -23,10 +23,21 @@ import SubmitButton from "../ui/submit-button";
 import { createRoom } from "@/actions/room";
 import { useAuth } from "@clerk/nextjs";
 import MyToolTip from "../ui/my-tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Label } from "../ui/label";
+import { useRouter } from "next/navigation";
 
 export default function CreateRoom() {
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const { push } = useRouter();
 
   const { isSignedIn } = useAuth();
 
@@ -35,16 +46,21 @@ export default function CreateRoom() {
   const form = useForm({
     resolver: zodResolver(CreateRoomSchema),
     defaultValues: {
-      displayName: "",
       roomName: "",
       numPlayers: 5,
-      openRoom: false,
+      openRoom: "no" as "no" | "yes",
     },
   });
 
   const onSubmit = (values: z.infer<typeof CreateRoomSchema>) => {
     startTransition(() => {
-      createRoom(values).then();
+      createRoom(values).then((data) => {
+        console.log("data: ", data);
+        if (typeof data.success !== null && data.success) {
+          push(`/room/${data.success.roomId}`);
+        }
+      });
+      console.log(values);
     });
   };
 
@@ -64,20 +80,51 @@ export default function CreateRoom() {
                 name="roomName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="JohnDoe@example.com"
-                        type="email"
-                      />
+                      <Input {...field} placeholder="My room" type="text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="openRoom"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Availability:{" "}
+                      <span className="text-muted-foreground">
+                        Allow this room to be joinable without an invitation
+                      </span>
+                    </FormLabel>
+                    <FormControl>
+                      <div>
+                        <Select
+                          {...field}
+                          onValueChange={(value) => {
+                            field.onChange(value as "yes" | "no");
+                          }}
+                        >
+                          <SelectTrigger id="open">
+                            <SelectValue placeholder="Allow this room to be open?" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="yes">Yes</SelectItem>
+                            <SelectItem value="no">No</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <SubmitButton className="w-full">Create Room</SubmitButton>
+            <SubmitButton isPending={isPending} className="w-full">
+              Create Room
+            </SubmitButton>
           </form>
         </Form>
       </DialogContent>

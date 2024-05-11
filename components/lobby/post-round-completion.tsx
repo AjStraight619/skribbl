@@ -1,7 +1,9 @@
 import {
+  useMutation,
   useOthersListener,
   useOthersMapped,
   useSelf,
+  useStorage,
 } from "@/liveblocks.config";
 import { useEffect, useMemo, useState } from "react";
 import { Dialog } from "../ui/dialog";
@@ -9,6 +11,7 @@ import { useRound } from "@/hooks/useRound";
 
 export default function PostRoundCompletion() {
   const { startNewRound } = useRound();
+  const maxRound = useStorage((root) => root.game.maxRounds);
 
   const [allUsersHadTurn, setAllUsersHadTurn] = useState(false);
   const myTurnStatus = useSelf((me): [number, boolean] => {

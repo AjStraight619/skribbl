@@ -22,22 +22,27 @@ import {
 import { WordDifficulty } from "@/types/type";
 
 export function PreGameLobby() {
-  const { startNewRound, round } = useRound();
-  const game = useStorage((root) => root.game);
+  const { startNewTurn } = useRound();
+  const timer = useStorage((root) => root.round.timer);
+  // const game = useStorage((root) => root.game);
+  const isStarted = useStorage((root) => root.game.isStarted);
   const [myPresence, updateMyPresence] = useMyPresence();
-  const players = useStorage((root) => root.players);
+  const isLeader = useStorage((root) => root.players.find((p) => p.isLeader));
+
+  console.log("isLeader: ", isLeader);
+
   const myId = useSelf((me) => me.id);
 
-  useEffect(() => {
-    if (!players) return;
-    const isLeader = players.find((player) => player.id === myId)?.isLeader;
-    updateMyPresence({ isLeader: isLeader });
-  }, [players, myId, updateMyPresence]);
+  // useEffect(() => {
+  //   if (!players) return;
+  //   const isLeader = players.find((player) => player.id === myId)?.isLeader;
+  //   updateMyPresence({ isLeader: isLeader });
+  // }, [players, myId, updateMyPresence]);
 
   const handleStartGame = useMutation(({ storage }) => {
     const game = storage.get("game");
     game.set("isStarted", true);
-    startNewRound();
+    startNewTurn();
   }, []);
 
   const handleTimerChange = useMutation(
@@ -62,7 +67,7 @@ export function PreGameLobby() {
 
   return (
     <Dialog
-      open={!game.isStarted}
+      open={!isStarted}
       onOpenChange={handleStartGame}
       defaultOpen={false}
     >
@@ -76,10 +81,10 @@ export function PreGameLobby() {
           <div>
             <Label>Time per round:</Label>
             <Input
-              disabled={!myPresence.isLeader}
+              disabled={!isLeader}
               onChange={handleTimerChange}
               type="number"
-              value={round.timer}
+              value={timer}
               min={45}
               max={100}
             />
@@ -90,7 +95,7 @@ export function PreGameLobby() {
               onValueChange={(value) =>
                 handleModeChange(value as WordDifficulty)
               }
-              disabled={!myPresence.isLeader}
+              disabled={!isLeader}
             >
               <SelectTrigger id="mode">
                 <SelectValue placeholder="Easy" />
@@ -106,7 +111,7 @@ export function PreGameLobby() {
             <Label htmlFor="rounds">Rounds:</Label>
             <Select
               onValueChange={(value) => handleRoundChange(value)}
-              disabled={!myPresence.isLeader}
+              disabled={!isLeader}
             >
               <SelectTrigger id="rounds">
                 <SelectValue defaultValue={7} placeholder="7" />
@@ -120,7 +125,7 @@ export function PreGameLobby() {
           </div>
         </div>
         <DialogFooter>
-          <Button disabled={!myPresence.isLeader} onClick={handleStartGame}>
+          <Button disabled={!isLeader} onClick={handleStartGame}>
             Start Game
           </Button>
         </DialogFooter>

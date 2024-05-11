@@ -13,6 +13,7 @@ import { LiveObject, shallow } from "@liveblocks/client";
 import { Player as PlayerType } from "@/types/type";
 import { cn } from "@/lib/utils";
 import { useRound } from "@/hooks/useRound";
+import { useUser } from "@clerk/nextjs";
 
 type LobbyProps = {
   className?: string;
@@ -26,10 +27,10 @@ export default function Lobby({
   showRound = true,
 }: LobbyProps) {
   const self = useSelf();
-  const { round } = useRound();
-  const { currentRound } = round;
+  const currentRound = useStorage((root) => root.round.currentRound);
 
-  const players = useStorage((root) => root.players, shallow);
+
+  const players = useStorage((root) => root.players);
   const numRounds = useStorage((root) => root.game.maxRounds);
 
   const isExistingUser = useCallback(
@@ -49,16 +50,13 @@ export default function Lobby({
           username: self.info.username,
           score: 0,
           avatar: self.info.avatar,
-          isLeader:
-            currentPlayers.length === 0 ||
-            currentPlayers.find((player) => player.id)?.isLeader ||
-            false,
+          isLeader: currentPlayers.length === 0,
           isDrawing: false,
           isTurn: false,
           didGuessWord: false,
           messages: [],
+          hasHadTurn: false,
         });
-        setMyPresence({ isLeader: newPlayer.toObject().isLeader });
         storage.get("players").push(newPlayer);
       }
     },

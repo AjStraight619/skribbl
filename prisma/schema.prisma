@@ -14,19 +14,25 @@ datasource db {
 }
 
 model Player {
-  id           String       @id @default(cuid())
-  userId       String
+  id           String     @id @unique
   name         String
-  username     String       @unique
+  username     String?      @unique
+  avatar       String?
+  isProfileComplete  Boolean
   leaderboard  LeaderBoard? 
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  room Room[]
 }
 
 model Room {
   id           String    @id @default(cuid())
   name         String
-  isOpen       Boolean
+  isOpen       OpenRoom
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  playerId     String    
+  player       Player    @relation(fields: [playerId], references: [id])
 }
 
 model LeaderBoard {
@@ -38,4 +44,10 @@ model LeaderBoard {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
   player              Player   @relation(fields: [playerId], references: [id])
+}
+
+
+enum OpenRoom {
+  yes
+  no
 }

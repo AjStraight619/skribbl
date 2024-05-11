@@ -1,14 +1,6 @@
 import { z } from "zod";
 
 export const CreateRoomSchema = z.object({
-  displayName: z
-    .string()
-    .min(1, {
-      message: "Display name must of at least one character",
-    })
-    .max(12, {
-      message: "Maximum of 12 characters.",
-    }),
   roomName: z
     .string()
     .min(3, {
@@ -24,8 +16,11 @@ export const CreateRoomSchema = z.object({
     })
     .max(8, {
       message: "Eight players maximum",
-    }),
-  openRoom: z.boolean().optional(),
+    })
+    .default(5),
+  openRoom: z.enum(["yes", "no"], {
+    required_error: "You must specify room availability.",
+  }),
 });
 
 export const RegisterSchema = z

@@ -57,6 +57,7 @@ export type Player = {
   isTurn: boolean;
   didGuessWord: boolean;
   messages: Message[];
+  hasHadTurn: boolean;
 };
 
 export type Layer = RectangleLayer | EllipseLayer | PathLayer;

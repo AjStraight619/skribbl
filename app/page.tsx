@@ -1,3 +1,4 @@
+import { createPlayer } from "@/actions/player";
 import CreateRoom from "@/components/landing-page/create-room";
 import JoinRoom from "@/components/landing-page/join-room";
 import TopNav from "@/components/landing-page/topnav";
@@ -9,10 +10,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
+
+async function checkIsExistingPlayer(userId: string) {
+  const player = await db.player.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  return player !== null;
+}
 
 export default async function Home() {
   const session = auth();
+
   // const res = await fetch("http://localhost:3000/api/test", {
   //   cache: "no-store",
   // });
@@ -22,7 +36,24 @@ export default async function Home() {
   //   console.log("This is the data from the home page: ", data);
   // }
 
-  // console.log(JSON.stringify(session, null, 2));
+  console.log(JSON.stringify(session, null, 2));
+
+  if (!session || !session.userId) {
+    redirect("/sign-in");
+  }
+
+  const isExistingPlayer = await checkIsExistingPlayer(session.userId);
+
+  console.log("isExistingPlayer?: ", isExistingPlayer);
+
+  if (!isExistingPlayer) {
+    const newPlayer = await createPlayer(session.userId);
+
+    console.log("new player: ", newPlayer);
+    // if (newPlayer.success && newPlayer.success.user.id) {
+    //   redirect(`profile/${newPlayer.success.user.id}/finish`);
+    // }
+  }
 
   return (
     <main className="flex min-h-screen flex-col justify-evenly items-center p-24">
