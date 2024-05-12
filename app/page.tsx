@@ -1,3 +1,4 @@
+import { getOpenRooms } from "@/actions/getData";
 import { createPlayer } from "@/actions/player";
 import CreateRoom from "@/components/landing-page/create-room";
 import JoinRoom from "@/components/landing-page/join-room";
@@ -50,10 +51,9 @@ export default async function Home() {
     const newPlayer = await createPlayer(session.userId);
 
     console.log("new player: ", newPlayer);
-    // if (newPlayer.success && newPlayer.success.user.id) {
-    //   redirect(`profile/${newPlayer.success.user.id}/finish`);
-    // }
   }
+
+  const openRooms = await getOpenRooms();
 
   return (
     <main className="flex min-h-screen flex-col justify-evenly items-center p-24">
@@ -84,7 +84,7 @@ export default async function Home() {
               </p>
             )}
             <CreateRoom />
-            <JoinRoom />
+            <JoinRoom openRooms={openRooms} />
           </div>
         </CardContent>
       </Card>

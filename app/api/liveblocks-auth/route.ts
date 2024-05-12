@@ -1,6 +1,7 @@
 import { Liveblocks } from "@liveblocks/node";
 import { NextRequest } from "next/server";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { nanoid } from "nanoid";
 
 const liveblocks = new Liveblocks({
   secret: process.env.LIVEBLOCKS_SECRET_KEY!,
@@ -9,10 +10,7 @@ const liveblocks = new Liveblocks({
 export async function POST(request: NextRequest) {
   const { room } = await request.json();
 
-  console.log(JSON.stringify(request, null, 2));
-
   const user = await currentUser();
-  const { userId } = auth();
 
   const userMetadata = {
     username: user?.firstName || "Player",
@@ -20,7 +18,7 @@ export async function POST(request: NextRequest) {
   };
 
   const session = liveblocks.prepareSession(
-    userId!,
+    user!.id,
     { userInfo: userMetadata } // Optional
   );
 
@@ -34,4 +32,13 @@ export async function POST(request: NextRequest) {
   // Authorize the user and return the result
   const { status, body } = await session.authorize();
   return new Response(body, { status });
+}
+
+function getTestUser() {
+  return {
+    id: nanoid(),
+    info: {
+      username: "Test User",
+    },
+  };
 }

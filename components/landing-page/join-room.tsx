@@ -21,14 +21,115 @@ import { z } from "zod";
 import { Input } from "../ui/input";
 import { useAuth } from "@clerk/nextjs";
 import MyToolTip from "../ui/my-tooltip";
+import SubmitButton from "../ui/submit-button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { ScrollArea } from "../ui/scroll-area";
+import { useDebounce, useDebouncedCallback } from "use-debounce";
+import { usePathname } from "next/navigation";
 
-export default function JoinRoom() {
+type JoinRoomProps = {
+  openRooms: OpenRoom[];
+};
+
+type OpenRoom = {
+  id: string;
+  name: string;
+  numPlayers: number;
+};
+
+const testData = [
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+  {
+    name: "room",
+    numPlayers: 4,
+  },
+];
+
+export default function JoinRoom({ openRooms }: JoinRoomProps) {
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [input, setInput] = useState("");
+  const pathname = usePathname();
   const form = useForm();
-
   const { isSignedIn } = useAuth();
 
+  // TODO: Handle backend logic for joining a room
   const onSubmit = () => {};
+
+  const isValidLink = useDebouncedCallback((input: string) => {
+    const parts = input.split("/");
+  }, 3000);
+
+  const handleInputChange = (input: string) => {
+    setInput(input);
+    isValidLink(input);
+  };
+
+  const handleRoomSelection = (roomId: string) => {
+    setInput(`${pathname}/room/${roomId}`);
+  };
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
@@ -49,12 +150,13 @@ export default function JoinRoom() {
                 name="roomName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Room Link</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="JohnDoe@example.com"
-                        type="email"
+                        type="text"
+                        value={input}
+                        onChange={(e) => handleInputChange(e.target.value)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -62,8 +164,30 @@ export default function JoinRoom() {
                 )}
               />
             </div>
+            <SubmitButton className="w-full">Join Room</SubmitButton>
           </form>
         </Form>
+        <Card className="">
+          <CardHeader>
+            <CardTitle className="text-center">Open Rooms</CardTitle>
+          </CardHeader>
+          <ScrollArea>
+            <CardContent className="max-h-[20rem]">
+              <ul className="flex flex-col gap-y-1">
+                {testData.map((item, idx) => (
+                  <li
+                    tabIndex={0}
+                    className="flex items-center justify-between hover:bg-secondary p-2 rounded-lg"
+                    key={idx}
+                  >
+                    <span>{item.name}</span>
+                    <span>{item.numPlayers} / 8</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </ScrollArea>
+        </Card>
       </DialogContent>
     </Dialog>
   );

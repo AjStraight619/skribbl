@@ -32,12 +32,14 @@ export default function WordDisplay() {
 
   const clearGameStorage = useMutation(({ storage }) => {
     const game = storage.get("game");
+    const round = storage.get("round");
     storage.get("players").forEach((p) => p.set("isDrawing", false));
+    storage.get("players").forEach((p) => p.set("score", 0));
     game.set("isFinished", false);
     game.set("isStarted", false);
     game.set("maxRounds", 8);
-    const round = storage.get("round");
     round.set("currentRound", 0);
+    round.set("timer", round.get("timePerRound"));
   }, []);
 
   // useInterval(() => {

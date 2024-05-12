@@ -22,7 +22,7 @@ import {
 import { WordDifficulty } from "@/types/type";
 
 export function PreGameLobby() {
-  const { startNewTurn } = useRound();
+  const { startNewTurn, startNewRound } = useRound();
   const timer = useStorage((root) => root.round.timer);
   // const game = useStorage((root) => root.game);
   const isStarted = useStorage((root) => root.game.isStarted);
@@ -42,7 +42,7 @@ export function PreGameLobby() {
   const handleStartGame = useMutation(({ storage }) => {
     const game = storage.get("game");
     game.set("isStarted", true);
-    startNewTurn();
+    startNewRound();
   }, []);
 
   const handleTimerChange = useMutation(

@@ -10,8 +10,9 @@ export async function getPlayer(userId: string) {
     where: {
       id: userId,
     },
-    include: {},
   });
+
+  return playerInfo;
 }
 
 export async function getRoomId(id: string) {
@@ -36,3 +37,18 @@ export async function getRoomId(id: string) {
 }
 
 export async function getLeaderboardData() {}
+
+export async function getOpenRooms() {
+  const rooms = await db.room.findMany({
+    where: {
+      isOpen: "yes",
+    },
+    select: {
+      id: true,
+      name: true,
+      numPlayers: true,
+    },
+  });
+
+  return rooms;
+}

@@ -34,6 +34,7 @@ export async function createRoom(values: z.infer<typeof CreateRoomSchema>) {
       data: {
         name: roomName,
         isOpen: openRoom,
+        numPlayers: 1,
         player: {
           connect: {
             id: userId,
@@ -67,3 +68,5 @@ export async function createRoom(values: z.infer<typeof CreateRoomSchema>) {
     };
   }
 }
+
+export async function joinRoom() {}
